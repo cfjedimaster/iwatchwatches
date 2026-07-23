@@ -1,0 +1,107 @@
+---
+import { count, eq, sql } from "drizzle-orm";
+import ArticleCard from "../components/ArticleCard.astro";
+import FeaturedArticle from "../components/FeaturedArticle.astro";
+import Header from "../components/Header.astro";
+import Pagination from "../components/Pagination.astro";
+import { SITE_NAME } from "../config";
+import { db } from "../db";
+import { feedItems, feeds } from "../db/schema";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPagination, parsePageParam } from "../lib/pagination";
+
+const requestedPage = parsePageParam(Astro.url.searchParams.get("page"));
+
+const [{ total }] = await db.select({ total: count() }).from(feedItems);
+const pagination = getPagination(Number(total), requestedPage);
+
+if (requestedPage > pagination.totalPages && Number(total) > 0) {
+  return Astro.redirect(`/?page=${pagination.totalPages}`);
+}
+
+if (requestedPage > 1 && Number(total) === 0) {
+  return Astro.redirect("/");
+}
+
+const items = await db
+  .select({
+    id: feedItems.id,
+    title: feedItems.title,
+    url: feedItems.url,
+    synopsis: feedItems.synopsis,
+    imageUrl: feedItems.imageUrl,
+    publishedAt: feedItems.publishedAt,
+    feedName: feeds.name,
+    feedUrl: feeds.url,
+  })
+  .from(feedItems)
+  .innerJoin(feeds, eq(feedItems.feedId, feeds.id))
+  .orderBy(sql`coalesce(${feedItems.publishedAt}, ${feedItems.createdAt}) desc`)
+  .limit(pagination.pageSize)
+  .offset(pagination.offset);
+
+const [featured, ...rest] = items;
+const pageLabel =
+  pagination.currentPage > 1 ? `Page ${pagination.currentPage}` : undefined;
+---
+
+<BaseLayout title={pageLabel ? `${SITE_NAME} · ${pageLabel}` : SITE_NAME}>
+  <div class="site-shell">
+    <Header />
+
+    {
+      !featured ? (
+        <section class="empty-state">
+          <h1>No articles yet</h1>
+          <p>Feed items will appear here after the daily update runs.</p>
+        </section>
+      ) : (
+        <>
+          <FeaturedArticle
+            title={featured.title}
+            url={featured.url}
+            synopsis={featured.synopsis}
+            imageUrl={featured.imageUrl}
+            publishedAt={featured.publishedAt}
+            feedName={featured.feedName}
+            feedUrl={featured.feedUrl}
+          />
+
+          {rest.length > 0 && (
+            <section class="card-grid" aria-label="Latest articles">
+              {rest.map((item) => (
+                <ArticleCard
+                  title={item.title}
+                  url={item.url}
+                  synopsis={item.synopsis}
+                  imageUrl={item.imageUrl}
+                  publishedAt={item.publishedAt}
+                  feedName={item.feedName}
+                  feedUrl={item.feedUrl}
+                />
+              ))}
+            </section>
+          )}
+
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            hasPrev={pagination.hasPrev}
+            hasNext={pagination.hasNext}
+          />
+        </>
+      )
+    }
+
+    <footer class="site-footer">
+      <span>Made by <a href="https://www.raymondcamden.com">Raymond Camden</a></span>
+      <span>
+        {
+          pagination.totalItems > 0
+            ? `${pagination.totalItems} articles · page ${pagination.currentPage} of ${pagination.totalPages}`
+            : "Waiting for the first feed sync"
+        }
+      </span>
+    </footer>
+  </div>
+</BaseLayout>

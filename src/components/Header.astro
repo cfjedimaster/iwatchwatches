@@ -1,0 +1,23 @@
+---
+import { SITE_NAME } from "../config";
+---
+
+<header class="site-header">
+  <a class="brand" href="/">{SITE_NAME}</a>
+  <div class="header-controls">
+    <label class="search-field" aria-label="Search coming soon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-3.5-3.5"></path>
+      </svg>
+      <input
+        type="search"
+        placeholder="Search watches, brands, or articles"
+        disabled
+        aria-disabled="true"
+        title="Search will be powered by Algolia soon"
+      />
+    </label>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="true">Light</button>
+  </div>
+</header>

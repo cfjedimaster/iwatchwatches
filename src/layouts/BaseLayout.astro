@@ -1,0 +1,44 @@
+---
+import "../styles/global.css";
+import { SITE_DESCRIPTION, SITE_NAME } from "../config";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
+const pageTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      (() => {
+        const key = "iwatchwatches-theme";
+        const stored = localStorage.getItem(key);
+        const theme =
+          stored === "light" || stored === "dark"
+            ? stored
+            : window.matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import "../scripts/theme.ts";
+    </script>
+  </body>
+</html>

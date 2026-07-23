@@ -1,0 +1,13 @@
+[build]
+  command = "astro build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[dev]
+  command = "astro dev"
+  targetPort = 4321
+  port = 8888
+  autoLaunch = false

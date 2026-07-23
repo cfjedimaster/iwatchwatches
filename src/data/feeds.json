@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Hodinkee",
+    "url": "https://www.hodinkee.com",
+    "feedurl": "https://www.hodinkee.com/articles/rss.xml"
+  },
+  {
+    "name": "Fratello",
+    "url": "https://www.fratellowatches.com",
+    "feedurl": "https://www.fratellowatches.com/feed/"
+  },
+  {
+    "name": "Worn & Wound",
+    "url": "https://wornandwound.com",
+    "feedurl": "https://wornandwound.com/feed"
+  },
+  {
+    "name": "aBlogtoWatch",
+    "url": "https://www.ablogtowatch.com",
+    "feedurl": "https://www.ablogtowatch.com/feed/"
+  },
+  {
+    "name": "Monochrome Watches",
+    "url": "https://monochrome-watches.com",
+    "feedurl": "https://monochrome-watches.com/feed/"
+  },
+  {
+    "name": "A Collected Man",
+    "url": "https://www.acollectedman.com",
+    "feedurl": "https://www.acollectedman.com/blogs/journal.atom"
+  }
+]
